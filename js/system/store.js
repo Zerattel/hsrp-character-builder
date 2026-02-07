@@ -1,9 +1,11 @@
 import { START_PHYS, START_SKILL } from './env.js';
 
-let currentPhysPool = START_PHYS;
-let currentSkillPool = START_SKILL;
+const pools = {
+  phys: START_PHYS,
+  skill: START_SKILL,
+};
 
-let user = {
+const user = {
   name: "",
   belong: "",
   classId: "",
@@ -12,4 +14,4 @@ let user = {
   skills: {},
 };
 
-export { currentPhysPool, currentSkillPool, user };
+export { pools, user };

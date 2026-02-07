@@ -8,9 +8,8 @@ import {
   CLASSES,
   PHYSICAL_STATS,
 } from './system/env.js';
-import { 
-  currentPhysPool, 
-  currentSkillPool, 
+import {
+  pools, 
   user 
 } from './system/store.js'
 
@@ -200,7 +199,7 @@ window.changeStat = function (containerId, key, delta) {
 
 function updatePhysPool() {
   const sum = Object.values(user.stats).reduce((a, b) => a + b, 0);
-  const remaining = currentPhysPool - sum;
+  const remaining = pools.phys - sum;
   const el = document.getElementById("pool-phys-val");
   el.innerText = remaining;
   el.style.color = remaining === 0 ? "var(--accent-green)" : "var(--accent-red)";
@@ -209,7 +208,7 @@ function updatePhysPool() {
 
 function updateSkillsPool() {
   const sum = Object.values(user.skills).reduce((a, b) => a + b, 0);
-  const remaining = currentSkillPool - sum;
+  const remaining = pools.skill - sum;
   const el = document.getElementById("pool-skills-val");
   el.innerText = remaining;
   el.style.color = remaining === 0 ? "var(--accent-green)" : "var(--accent-red)";
@@ -222,21 +221,23 @@ function updateSkillsPool() {
 function toggleHardcore() {
   const isHardcore = document.getElementById("chk-hardcore").checked;
 
+  console.log(user)
+
   // Сброс всех статов
   for (let k in user.stats) user.stats[k] = 0;
   for (let k in user.skills) user.skills[k] = 0;
 
   if (isHardcore) {
-    currentPhysPool = HARDCORE_PHYS;
-    currentSkillPool = HARDCORE_SKILL;
+    pools.phys = HARDCORE_PHYS;
+    pools.skill = HARDCORE_SKILL;
   } else {
-    currentPhysPool = START_PHYS;
-    currentSkillPool = START_SKILL;
+    pools.phys = START_PHYS;
+    pools.skill = START_SKILL;
   }
   renderStats();
 }
 
-document.getElementById('chk-hardcore').onchange = () => toggleHardcore();
+document.getElementById('chk-hardcore').addEventListener('change', () => toggleHardcore());
 
 
 function getStatBar(value) {
@@ -259,8 +260,8 @@ function generateAndCopy() {
   const physSum = Object.values(user.stats).reduce((a, b) => a + b, 0);
   const skillSum = Object.values(user.skills).reduce((a, b) => a + b, 0);
 
-  const physRem = currentPhysPool - physSum;
-  const skillRem = currentSkillPool - skillSum;
+  const physRem = pools.phys - physSum;
+  const skillRem = pools.skill - skillSum;
   const isOverride = document.getElementById("chk-override").checked;
   const isHardcore = document.getElementById("chk-hardcore").checked;
 
