@@ -1,0 +1,89 @@
+// Стартовые очки для обычного режима
+const START_PHYS = 3;
+const START_SKILL = 4;
+
+// Стартовые очки (дефицит) для Хардкора
+const HARDCORE_PHYS = -3;
+const HARDCORE_SKILL = -4;
+
+const BELONGS = [
+  {
+    id: "gleele",
+    title: "Глиилец",
+    img: "./resources/images/belongs/gleele.png",
+    desc: "Вы житель последнего оплота истинной демократии, прорвавшийся сквозь бюрократию и гражданские конфликты к порогу начала своей истории.",
+  },
+  {
+    id: "noble",
+    title: "Корпорат",
+    img: "./resources/images/belongs/corporat.png",
+    desc: "До недавна вы были частью безжалостной, но столь притягательной своим богатством капиталистической машины альянса корпораций Noble Coalition, но сегодня вы станете её рукой.",
+  },
+  {
+    id: "klemantis",
+    title: "Клемантиец",
+    img: "./resources/images/belongs/klemantis.png",
+    desc: "Вы выросли в коммунистической сверхдержаве зверян — истинных владельцев сектора Хаят. Вы знаете, что нет слишком большой жертвы во имя процветания и сегодня пришёл день, чтобы привратить свою идею в действия.",
+  },
+  {
+    id: "sof",
+    title: "Солдат Удачи",
+    img: "./resources/images/belongs/sof.png",
+    desc: "Более за вами нет ни принадлежности ни родины. Вы — солдат удачи и ваша жизнь находится целиком в ваших руках. ИНТЕРПОЛ гарантирует вам право на вашу деятельность, но порой закон лишь отягощает, если вы понимаете о чём я.",
+  },
+];
+
+const CLASSES = [
+  {
+    id: "soldier",
+    title: "Солдат",
+    img: "./resources/images/classes/solider/soldier.png",
+    desc: "Пехотный боец. Бойцы- костяк любой пехотной армии. В секторе Хаят чаще добиваются своего силой чем хотелось бы.",
+    bg: "./resources/images/classes/solider/soldierBG.png",
+    skills: ["Стрельба", "Ближний бой", "Тактика", "Ловкость", "Точность", "Физ. Подготовка"],
+  },
+  {
+    id: "specialist",
+    title: "Специалист",
+    img: "./resources/images/classes/specialist/specialist.png",
+    desc: "Специалисты всегда актуальны. Они обладают полезными техническими или медицинскими знаниями, расширяющими потенциал любой команды.",
+    bg: "./resources/images/classes/specialist/specialistBG.png",
+    skills: ["Дедукция", "Мастерство", "Медицина", "Инженерия", "Контроль", "Тех Подготовка"],
+  },
+  {
+    id: "precognit",
+    title: "Прекогнит",
+    img: "./resources/images/classes/precognit/precognit.png",
+    desc: "Идеальный пилот или жертва капиталистической машины? Какая разница? Прекогниты это мастера управления кораблями одной лишь силой мысли.",
+    bg: "./resources/images/classes/precognit/precognitBG.png",
+    skills: [
+      "Память",
+      "Интеллектуальная гибкость",
+      "Восприятие",
+      "Сила воли",
+      "Реакция",
+      "Харизма",
+    ],
+  },
+  {
+    id: "biodis",
+    title: "Биодистортор",
+    img: "./resources/images/classes/biodis/biodis.png",
+    desc: "Если не учить магию то всё вокруг будет казатся физикой. Биодисторторы могут манипулировать тканью пространства-времени с помощью своих техник.",
+    bg: "./resources/images/classes/biodis/biodisBG.png",
+    skills: ["Гармония", "Терпение", "Чувствительность", "Гнев", "Спокойствие", "Проницательность"],
+  },
+];
+
+const PHYSICAL_STATS = ["Сила", "Внимательность", "Выносливость", "Обаятельность", "Удача"];
+
+
+export { 
+  START_PHYS,
+  START_SKILL,
+  HARDCORE_PHYS,
+  HARDCORE_SKILL,
+  BELONGS,
+  CLASSES,
+  PHYSICAL_STATS,
+}
