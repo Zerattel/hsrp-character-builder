@@ -143,26 +143,35 @@
         .card {
             width: var(--card-width);
             height: var(--card-height);
-            border: 1px solid #fff;
-            background-color: rgba(0, 0, 0, 0.4); /* ПРОЗРАЧНОСТЬ */
+            border: 1px solid #fff; /* Рамка останется на прямых линиях */
+            background-color: rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
             position: relative;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.3s;
+            transition: transform 0.2s, filter 0.3s; /* Меняем анимацию тени */
             overflow: hidden;
             backdrop-filter: blur(2px);
+            
+            /* === МАГИЯ СРЕЗА (Верх-Лево и Низ-Право) === */
+            clip-path: polygon(
+                20px 0, 100% 0, 
+                100% calc(100% - 20px), calc(100% - 20px) 100%, 
+                0 100%, 0 20px
+            );
         }
 
         .card:hover {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            /* Используем drop-shadow вместо box-shadow для свечения по форме */
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
             transform: translateY(-5px);
             border-color: #fff;
         }
 
         .card.selected {
             border-color: var(--accent-green);
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            /* Зеленое свечение по форме среза */
+            filter: drop-shadow(0 0 15px rgba(0, 255, 65, 0.4));
         }
 
         .card.wide {
@@ -176,9 +185,14 @@
         }
 
         .card-header-img {
-            height: 33%; width: 100%;
-            background-size: cover; background-position: center;
-            z-index: 1; border-bottom: 1px solid #fff;
+            height: 33%;
+            width: 100%;
+            background-size: cover;
+            /* БЫЛО: center */
+            /* СТАЛО: top center - это заставит картинку начинаться сверху */
+            background-position: top center; 
+            z-index: 1;
+            border-bottom: 1px solid #fff;
         }
 
         .card-content {
@@ -199,19 +213,28 @@
         }
 
         .stat-column {
-            width: 45%;
+            width: 30%;
             min-width: 400px;
             border: 1px solid #555;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.5); /* ПРОЗРАЧНОСТЬ */
+            background: rgba(0, 0, 0, 0.5);
             margin-bottom: 20px;
             transition: border-color 0.3s;
             backdrop-filter: blur(5px);
+
+            /* === СРЕЗ ДЛЯ МЕНЮ === */
+            clip-path: polygon(
+                20px 0, 100% 0, 
+                100% calc(100% - 20px), calc(100% - 20px) 100%, 
+                0 100%, 0 20px
+            );
         }
         
         .stat-column.balanced {
             border-color: var(--accent-green);
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+            /* Свечение всего блока при балансе */
+            filter: drop-shadow(0 0 8px rgba(0, 255, 65, 0.2));
+            box-shadow: none; /* Отключаем старую тень */
         }
 
         .pool-counter {
@@ -305,6 +328,11 @@
         .btn-copy:hover { box-shadow: 0 0 30px var(--accent-green); }
         .discord-link { display: block; margin-top: 15px; color: #fff; text-decoration: underline; font-size: 0.9rem; }
 
+        /* === ИСПРАВЛЕНИЕ ФОНА ДЛЯ ПОСЛЕДНЕГО РАЗДЕЛА === */
+        #stats-bg {
+            opacity: 0.6; /* Поднимаем яркость с 0.2 до 0.6 (регулируй от 0 до 1) */
+            filter: none; /* Возвращаем цвета (убираем ч/б фильтр) */
+        }
     </style>
 </head>
 <body>
@@ -312,13 +340,13 @@
 <audio id="error-sound" src="https://github.com/Zerattel/hsrp-character-builder/raw/refs/heads/main/EVE-structure-warning.mp3"></audio>
 
 <section id="section-intro" class="active">
-    <div class="bg-layer" style="background-image: url('https://placehold.co/1920x1080/111/333?text=Intro+BG');"></div>
+    <div class="bg-layer" style="background-image: url('https://github.com/Zerattel/hsrp-character-builder/blob/main/background1.png?raw=true');"></div>
     <div class="container" style="text-align: center; margin-top: 10vh;">
-        <img src="https://github.com/Zerattel/hsrp-character-builder/blob/main/hsrp-logo.png?raw=true" alt="Logo" style="margin-bottom: 20px; border: 1px solid #fff; background: rgba(0,0,0,0.5);">
+        <img src="https://github.com/Zerattel/hsrp-character-builder/blob/main/welcome.png?raw=true" alt="Logo" style="margin-bottom: 20px; background: rgba(0, 0, 0, 0); width: 1000px;">
         
-        <h2>Добро пожаловать в Систему</h2>
+        <h2>Добро пожаловать в ИСП-1</h2>
         <p style="max-width: 600px; margin: 0 auto 30px auto;">
-            Это конструктор персонажа для нашей вселенной.
+            Инструмент создания персонажа предназначен для того, чтобы помочь вам с составлением анкеты для игры в Hayat Sector Roleplay
         </p>
 
         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -335,7 +363,7 @@
 </section>
 
 <section id="section-belong">
-    <div class="bg-layer" style="background-image: url('https://placehold.co/1920x1080/222/444?text=Belong+BG');"></div>
+    <div class="bg-layer" style="background-image: url('https://github.com/Zerattel/hsrp-character-builder/blob/main/background1.png?raw=true');"></div>
     <div class="container">
         <h1 style="text-align: center; border-bottom: 2px solid white; padding-bottom: 10px;">ВЫБОР ПРОИСХОЖДЕНИЯ</h1>
         <div class="cards-grid" id="belong-grid"></div>
@@ -346,7 +374,7 @@
 </section>
 
 <section id="section-class">
-    <div class="bg-layer" style="background-image: url('https://placehold.co/1920x1080/333/555?text=Class+BG');"></div>
+    <div class="bg-layer" style="background-image: url('https://github.com/Zerattel/hsrp-character-builder/blob/main/background1.png?raw=true');"></div>
     <div class="container">
         <h1 style="text-align: center; border-bottom: 2px solid white; padding-bottom: 10px;">ВЫБОР КЛАССА</h1>
         <div class="cards-grid" id="class-grid"></div>
@@ -357,7 +385,7 @@
 </section>
 
 <section id="section-stats">
-    <div class="bg-layer" id="stats-bg" style="background-image: url('https://placehold.co/1920x1080/000/333?text=Generic+Stats+BG');"></div>
+    <div class="bg-layer" id="stats-bg" style="background-image: url('https://github.com/Zerattel/hsrp-character-builder/blob/main/background1.png?raw=true');"></div>
     
     <div class="container">
         <div style="border: 1px solid #fff; padding: 20px; margin-bottom: 20px; background: rgba(0,0,0,0.6);">
@@ -417,17 +445,17 @@
     let currentSkillPool = START_SKILL;
     
     const BELONGS = [
-        { id: 'gleele', title: 'Глиилец', img: 'https://placehold.co/275x130/222/fff?text=gleele', desc: 'Вы житель последнего оплота истинной демократии, прорвавшийся сквозь бюрократию и гражданские конфликты к порогу начала своей истории.' },
-        { id: 'noble', title: 'Корпорат', img: 'https://placehold.co/275x130/333/fff?text=noble', desc: 'До недавна вы были частью безжалостной, но столь притягательной своим богатством капиталистической машины альянса корпораций Noble Coalition, но сегодня вы станете её рукой.' },
-        { id: 'klemantis', title: 'Клемантиец', img: 'https://placehold.co/275x130/444/fff?text=klemantis', desc: 'Вы выросли в коммунистической сверхдержаве зверян — истинных владельцев сектора Хаят. Вы знаете, что нет слишком большой жертвы во имя процветания и сегодня пришёл день, чтобы привратить свою идею в действия.' },
-        { id: 'sof', title: 'Солдат Удачи', img: 'https://placehold.co/275x130/444/fff?text=sof', desc: 'Более за вами нет ни принадлежности ни родины. Вы — солдат удачи и ваша жизнь находится целиком в ваших руках. ИНТЕРПОЛ гарантирует вам право на вашу деятельность, но порой закон лишь отягощает, если вы понимаете о чём я.' },
+        { id: 'gleele', title: 'Глиилец', img: 'gleele.png', desc: 'Вы житель последнего оплота истинной демократии, прорвавшийся сквозь бюрократию и гражданские конфликты к порогу начала своей истории.' },
+        { id: 'noble', title: 'Корпорат', img: 'corporat.png', desc: 'До недавна вы были частью безжалостной, но столь притягательной своим богатством капиталистической машины альянса корпораций Noble Coalition, но сегодня вы станете её рукой.' },
+        { id: 'klemantis', title: 'Клемантиец', img: 'klemantis.png', desc: 'Вы выросли в коммунистической сверхдержаве зверян — истинных владельцев сектора Хаят. Вы знаете, что нет слишком большой жертвы во имя процветания и сегодня пришёл день, чтобы привратить свою идею в действия.' },
+        { id: 'sof', title: 'Солдат Удачи', img: 'sof.png', desc: 'Более за вами нет ни принадлежности ни родины. Вы — солдат удачи и ваша жизнь находится целиком в ваших руках. ИНТЕРПОЛ гарантирует вам право на вашу деятельность, но порой закон лишь отягощает, если вы понимаете о чём я.' },
     ];
 
     const CLASSES = [
-        { id: 'soldier', title: 'Солдат', img: 'https://placehold.co/400x130/550000/fff?text=SOLDIER', desc: 'Пехотный боец. Бойцы- костяк любой пехотной армии. В секторе Хаят чаще добиваются своего силой чем хотелось бы.', bg: 'https://placehold.co/1920x1080/550000/fff?text=SOLDIER+BG', skills: ['Стрельба', 'Ближний бой', 'Тактика', 'Ловкость', 'Точность', 'Физ. Подготовка'] },
-        { id: 'hacker', title: 'Специалист', img: 'https://placehold.co/400x130/005500/fff?text=HACKER', desc: 'Специалисты всегда актуальны. Они обладают полезными техническими или медицинскими знаниями, расширяющими потенциал любой команды.', bg: 'https://placehold.co/1920x1080/005500/fff?text=HACKER+BG', skills: ['Дедукция', 'Мастерство', 'Медицина', 'Инженерия', 'Контроль', 'Тех. Подготовка'] },
-        { id: 'medic', title: 'Прекогнит', img: 'https://placehold.co/400x130/000055/fff?text=MEDIC', desc: 'Идеальный пилот или жертва капиталистической машины? Какая разница? Прекогниты это мастера управления кораблями одной лишь силой мысли.', bg: 'https://placehold.co/1920x1080/000055/fff?text=MEDIC+BG', skills: ['Память', 'Интеллектуальная гибкость', 'Восприятие', 'Сила воли', 'Реакция', 'Харизма'] },
-        { id: 'pilot', title: 'Биодистортор', img: 'https://placehold.co/400x130/555500/fff?text=PILOT', desc: 'Если не учить магию то всё вокруг будет казатся физикой. Биодисторторы могут манипулировать тканью пространства-времени с помощью своих техник.', bg: 'https://placehold.co/1920x1080/555500/fff?text=PILOT+BG', skills: ['Гармония', 'Терпение', 'Чувствительность', 'Гнев', 'Спокойствие', 'Проницательность'] }
+        { id: 'soldier', title: 'Солдат', img: 'soldier.png', desc: 'Пехотный боец. Бойцы- костяк любой пехотной армии. В секторе Хаят чаще добиваются своего силой чем хотелось бы.', bg: 'soldierBG.png', skills: ['Стрельба', 'Ближний бой', 'Тактика', 'Ловкость', 'Точность', 'Физ. Подготовка'] },
+        { id: 'specialist', title: 'Специалист', img: 'specialist.png', desc: 'Специалисты всегда актуальны. Они обладают полезными техническими или медицинскими знаниями, расширяющими потенциал любой команды.', bg: 'specialistBG.png', skills: ['Дедукция', 'Мастерство', 'Медицина', 'Инженерия', 'Контроль', 'Тех Подготовка'] },
+        { id: 'precognit', title: 'Прекогнит', img: 'precognit.png', desc: 'Идеальный пилот или жертва капиталистической машины? Какая разница? Прекогниты это мастера управления кораблями одной лишь силой мысли.', bg: 'precognitBG.png', skills: ['Память', 'Интеллектуальная гибкость', 'Восприятие', 'Сила воли', 'Реакция', 'Харизма'] },
+        { id: 'biodis', title: 'Биодистортор', img: 'biodis.png', desc: 'Если не учить магию то всё вокруг будет казатся физикой. Биодисторторы могут манипулировать тканью пространства-времени с помощью своих техник.', bg: 'biodisBG.png', skills: ['Гармония', 'Терпение', 'Чувствительность', 'Гнев', 'Спокойствие', 'Проницательность'] }
     ];
 
     const PHYSICAL_STATS = ['Сила', 'Внимательность', 'Выносливость', 'Обаятельность', 'Удача'];
@@ -625,6 +653,22 @@
         renderStats();
     }
 
+    function getStatBar(value) {
+        let bar = "";
+        for (let i = -4; i <= 4; i++) {
+            if (i === 0) {
+                bar += "⬜"; 
+            } else if (i < 0) {
+                if (value < 0 && i >= value) bar += "🟥";
+                else bar += "⬛";
+            } else {
+                if (value > 0 && i <= value) bar += "🟩";
+                else bar += "⬛";
+            }
+        }
+        return bar;
+    }
+
     function generateAndCopy() {
         const physSum = Object.values(user.stats).reduce((a,b)=>a+b,0);
         const skillSum = Object.values(user.skills).reduce((a,b)=>a+b,0);
@@ -644,6 +688,7 @@
         
         errorBox.style.display = 'none';
 
+        // Генерация текста
         let text = `# ${user.name}\n`;
         text += `## ${user.className}\n`;
         text += `## ${user.belong}\n\n`;
@@ -654,12 +699,23 @@
         text += `\nОписание и характер: СТЕРЕТЬ И СОСТАВИТЬ САМОСТОЯТЕЛЬНО ПЕРЕД ОТПРАВКОЙ\n\n`;
         text += `Предыстория: СТЕРЕТЬ СОСТАВИТЬ САМОСТОЯТЕЛЬНО ПЕРЕД ОТПРАВКОЙ\n\n`;
         
-        text += `Физические характеристики:\n`;
-        for(const [k, v] of Object.entries(user.stats)) text += `> - [${k}] "${v}"\n`;
+        text += `## Физические характеристики:\n`;
+        text += "```text\n"; // Начало блока кода
+        for(const [k, v] of Object.entries(user.stats)) {
+            // padEnd(14) делает так, чтобы слово всегда занимало 14 символов
+            // Если слово короче, оно добьется пробелами справа
+            text += `${k.padEnd(14)} [${getStatBar(v)}] (${v > 0 ? '+'+v : v})\n`;
+        }
+        text += "```\n"; // Конец блока кода
 
-        text += `\nНавыки:\n`;
-        for(const [k, v] of Object.entries(user.skills)) text += `> - [${k}] "${v}"\n`;
+        text += `\n## Навыки:\n`;
+        text += "```text\n"; 
+        for(const [k, v] of Object.entries(user.skills)) {
+            text += `${k.padEnd(14)} [${getStatBar(v)}] (${v > 0 ? '+'+v : v})\n`;
+        }
+        text += "```\n";
 
+        // Копирование в буфер
         navigator.clipboard.writeText(text).then(() => {
             const btn = document.querySelector('.btn-copy');
             const originalText = btn.innerText;
