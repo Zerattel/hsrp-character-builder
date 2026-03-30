@@ -13,13 +13,15 @@
 <body>
 
 <audio id="error-sound" src="./resources/sounds/EVE-structure-warning.mp3"></audio>
+<audio id="select-sound" src="./resources/sounds/select.mp3"></audio>
+<audio id="submit-sound" src="./resources/sounds/submit.mp3"></audio>
 
 <section id="section-intro" class="active">
     <div class="bg-layer" style="background-image: url('./resources/images/background1.png');"></div>
     <div class="container" style="text-align: center; margin-top: 10vh;">
         <img src="./resources/images/welcome.png" alt="Logo" style="margin-bottom: 20px; background: rgba(0, 0, 0, 0); width: 1000px;">
         
-        <h2>Добро пожаловать в ИСП-1</h2>
+        <h2>Добро пожаловать в ИСП-1.1</h2>
         <p style="max-width: 600px; margin: 0 auto 30px auto;">
             Инструмент создания персонажа предназначен для того, чтобы помочь вам с составлением анкеты для игры в Hayat Sector Roleplay
         </p>
@@ -41,6 +43,9 @@
     <div class="bg-layer" style="background-image: url('./resources/images/background1.png');"></div>
     <div class="container">
         <h1 style="text-align: center; border-bottom: 2px solid white; padding-bottom: 10px;">ВЫБОР ПРОИСХОЖДЕНИЯ</h1>
+<p style="text-align: center; max-width: 800px; margin: 10px auto 30px auto; color: #ccc; font-size: 0.95rem;">
+    Одно лишь прослушивание <a href="https://discord.com/channels/1119006900831396001/1475679871681167474/1475679871681167474">вводной части</a> будет достаточным подспорьем, чтобы понять исторический контекст. Для большинства игр рекомендуется выбирать Солдата Удачи, так как для них в игре создано больше всего контента.
+</p>
         <div class="cards-grid" id="belong-grid"></div>
         <div style="text-align: center; width: 100%;">
             <button class="btn-main" id="submitBelong">ПРИНЯТЬ ВЫБОР</button>
@@ -52,6 +57,9 @@
     <div class="bg-layer" style="background-image: url('./resources/images/background1.png');"></div>
     <div class="container">
         <h1 style="text-align: center; border-bottom: 2px solid white; padding-bottom: 10px;">ВЫБОР КЛАССА</h1>
+<p style="text-align: center; max-width: 800px; margin: 10px auto 30px auto; color: #ccc; font-size: 0.95rem;">
+    Классы кардинально отличаются своими возможностями и отыгрышем. Солдаты и Специалисты считаются двумя основными классами. Прекогниты и Биодисторторы являются дополнительными их подвидами. Класс влияет на набор доступных к развитию <span class='accent-val'>навыков</span> и <span class='accent-val'>перков</span>. Помните — вам <span class='accentr-val'>ВСЕГДА</span> будет не хватать навыков и перков других классов. Универсальных перков или мультикласса не существует. Выбирайте с умом.
+</p>
         <div class="cards-grid" id="class-grid"></div>
         <div style="text-align: center; width: 100%;">
             <button class="btn-main" id="submitClass">ПРИНЯТЬ ВЫБОР</button>
@@ -107,6 +115,6 @@
 </section>
 
 <script type="module" src="./js/main.js"></script>
-
+<div id="global-tooltip" class="global-tooltip-text"></div>
 </body>
 </html>

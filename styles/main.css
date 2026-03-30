@@ -424,3 +424,45 @@ input[type="text"].success {
   opacity: 0.6; /* Поднимаем яркость с 0.2 до 0.6 (регулируй от 0 до 1) */
   filter: none; /* Возвращаем цвета (убираем ч/б фильтр) */
 }
+
+.accent-val {
+  color: var(--accent-green);
+  font-weight: bold;
+}
+
+.accentr-val {
+  color: var(--accent-red);
+  font-weight: bold;
+}
+
+/* === ОБНОВЛЕННЫЕ ГЛОБАЛЬНЫЕ ТУЛТИПЫ === */
+/* Класс для заголовка навыка, чтобы показать, что есть подсказка */
+.stat-item-help {
+  cursor: help;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+}
+
+/* Сам блок тултипа, который живет в корне body */
+.global-tooltip-text {
+  visibility: hidden;
+  width: 280px;
+  background-color: rgba(0, 0, 0, 0.98); /* Чуть плотнее */
+  color: #fff;
+  text-align: left;
+  border: 1px solid var(--accent-green);
+  padding: 12px;
+  position: fixed; /* Абсолютное позиционирование относительно окна */
+  z-index: 9999; /* Поверх ВСЕГО */
+  opacity: 0;
+  transition: opacity 0.2s; /* Чуть быстрее */
+  font-size: 0.85rem;
+  font-weight: normal;
+  pointer-events: none; /* Чтобы мышка не цеплялась за сам тултип */
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+  border-radius: 2px;
+}
+
+.global-tooltip-text.visible {
+  visibility: visible;
+  opacity: 1;
+}
