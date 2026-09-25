@@ -6,6 +6,10 @@ const START_SKILL = 4;
 const HARDCORE_PHYS = -3;
 const HARDCORE_SKILL = -4;
 
+// Очки на особые черты (перки)
+const START_PERK = 3;
+const HARDCORE_PERK = 1;
+
 const BELONGS = [
   {
     id: "gleele",
@@ -83,6 +87,8 @@ export {
   START_SKILL,
   HARDCORE_PHYS,
   HARDCORE_SKILL,
+  START_PERK,
+  HARDCORE_PERK,
   BELONGS,
   CLASSES,
   PHYSICAL_STATS,

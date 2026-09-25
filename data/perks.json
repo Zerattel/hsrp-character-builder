@@ -1,0 +1,147 @@
+{
+  "_schema": {
+    "note": "Это ПРИМЕРНЫЙ набор черт (перков) для демонстрации системы. Замени id/name/description/emblem/cost/requirements на свои. Файл читается js/system/perks.js.",
+    "fields": {
+      "id": "уникальный строковый идентификатор",
+      "name": "название черты",
+      "description": "текст, html-разметка допустима (span.accent-val и т.д.)",
+      "emblem": "путь до картинки-эмблемы (128x128 рекомендуется). Если файла нет — покажется автогенерируемая заглушка с первой буквой названия",
+      "cost": "стоимость в очках черт. Положительное число тратит очки, ОТРИЦАТЕЛЬНОЕ — добавляет очки (штраф/недостаток персонажа)",
+      "requirements": "массив условий, ВСЕ должны выполняться (логика И). Каждое условие: { skill: 'Название навыка или физ.статы', min: X } — навык >= X, ИЛИ { skill: '...', max: X } — навык <= X (используется для 'недостатков', напр. max: -1). Если у класса нет такого навыка/статы — черта не отображается вовсе."
+    }
+  },
+  "perks": [
+    {
+      "id": "iron_lungs",
+      "name": "Стальные лёгкие",
+      "description": "Годы физической подготовки закалили тело. <span class='accent-val'>+1</span> к сопротивлению урону от истощения (лор-бонус).",
+      "emblem": "./resources/images/perks/iron_lungs.png",
+      "cost": 2,
+      "requirements": [{ "skill": "Выносливость", "min": 2 }]
+    },
+    {
+      "id": "silver_tongue",
+      "name": "Серебряный язык",
+      "description": "Ваши слова режут острее клинка. Бонус к переговорам и вербовке в социальных сценах.",
+      "emblem": "./resources/images/perks/silver_tongue.png",
+      "cost": 2,
+      "requirements": [{ "skill": "Обаятельность", "min": 3 }]
+    },
+    {
+      "id": "unlucky_star",
+      "name": "Родился не в той системе",
+      "description": "Недостаток: удача словно избегает вас. Рассказчики получают карт-бланш на маленькие пакости.",
+      "emblem": "./resources/images/perks/unlucky_star.png",
+      "cost": -2,
+      "requirements": [{ "skill": "Удача", "max": -2 }]
+    },
+    {
+      "id": "night_watch_eyes",
+      "name": "Глаза ночного дозора",
+      "description": "Обострённое внимание к деталям. Логик-рп бонус к обнаружению скрытого и слежке.",
+      "emblem": "./resources/images/perks/night_watch_eyes.png",
+      "cost": 1,
+      "requirements": [{ "skill": "Внимательность", "min": 2 }]
+    },
+    {
+      "id": "deadeye",
+      "name": "Верный прицел",
+      "description": "Годы на стрельбище не прошли даром. <span class='accent-val'>+1</span> к точности на первом выстреле в бою.",
+      "emblem": "./resources/images/perks/deadeye.png",
+      "cost": 2,
+      "requirements": [{ "skill": "Стрельба", "min": 3 }]
+    },
+    {
+      "id": "blade_dancer",
+      "name": "Танцующий клинок",
+      "description": "Сочетание скорости и клинкового мастерства. Требует развитых рефлексов и техники одновременно.",
+      "emblem": "./resources/images/perks/blade_dancer.png",
+      "cost": 3,
+      "requirements": [
+        { "skill": "Ближний бой", "min": 2 },
+        { "skill": "Ловкость", "min": 2 }
+      ]
+    },
+    {
+      "id": "trigger_hand_tremor",
+      "name": "Тремор стреляющей руки",
+      "description": "Недостаток: старое ранение или нервы дают о себе знать при стрельбе на изготовку.",
+      "emblem": "./resources/images/perks/trigger_hand_tremor.png",
+      "cost": -1,
+      "requirements": [{ "skill": "Точность", "max": -2 }]
+    },
+    {
+      "id": "field_medic",
+      "name": "Полевой хирург",
+      "description": "Стабилизация раненых почти на автомате. Бонус ко всем броскам экстренной помощи.",
+      "emblem": "./resources/images/perks/field_medic.png",
+      "cost": 2,
+      "requirements": [{ "skill": "Медицина", "min": 2 }]
+    },
+    {
+      "id": "jack_of_wires",
+      "name": "Мастер на все руки",
+      "description": "Одинаково уверенно чинит турель и настраивает эмиттер. Требует широкого технического кругозора.",
+      "emblem": "./resources/images/perks/jack_of_wires.png",
+      "cost": 3,
+      "requirements": [
+        { "skill": "Мастерство", "min": 2 },
+        { "skill": "Инженерия", "min": 2 }
+      ]
+    },
+    {
+      "id": "technophobe",
+      "name": "Технофобия",
+      "description": "Недостаток: сложная техника вызывает у персонажа стойкое недоверие и заминки при обращении.",
+      "emblem": "./resources/images/perks/technophobe.png",
+      "cost": -1,
+      "requirements": [{ "skill": "Тех Подготовка", "max": -2 }]
+    },
+    {
+      "id": "steel_will",
+      "name": "Стальные нервы",
+      "description": "Перегрев модулей и паника соседей на вас не действуют. Бонус к сохранению самообладания.",
+      "emblem": "./resources/images/perks/steel_will.png",
+      "cost": 2,
+      "requirements": [{ "skill": "Сила воли", "min": 3 }]
+    },
+    {
+      "id": "eidetic_memory",
+      "name": "Эйдетическая память",
+      "description": "Ничего не забывается и ничего не теряется при калибровке систем. Требует развитой памяти и гибкости мышления.",
+      "emblem": "./resources/images/perks/eidetic_memory.png",
+      "cost": 3,
+      "requirements": [
+        { "skill": "Память", "min": 2 },
+        { "skill": "Интеллектуальная гибкость", "min": 1 }
+      ]
+    },
+    {
+      "id": "wrath_engine",
+      "name": "Двигатель гнева",
+      "description": "Чем яростнее персонаж, тем разрушительнее его техники. Требует высокого порога Гнева.",
+      "emblem": "./resources/images/perks/wrath_engine.png",
+      "cost": 3,
+      "requirements": [{ "skill": "Гнев", "min": 3 }]
+    },
+    {
+      "id": "still_water",
+      "name": "Тихая гладь",
+      "description": "Спокойствие, помноженное на внутреннюю гармонию, делает защитные техники почти безупречными.",
+      "emblem": "./resources/images/perks/still_water.png",
+      "cost": 2,
+      "requirements": [
+        { "skill": "Спокойствие", "min": 2 },
+        { "skill": "Гармония", "min": 1 }
+      ]
+    },
+    {
+      "id": "emotional_static",
+      "name": "Эмоциональные помехи",
+      "description": "Недостаток: нестабильный эмоциональный фон изредка мешает точной концентрации в бою.",
+      "emblem": "./resources/images/perks/emotional_static.png",
+      "cost": -2,
+      "requirements": [{ "skill": "Спокойствие", "max": -2 }]
+    }
+  ]
+}

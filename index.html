@@ -6,22 +6,34 @@
     <title>Конструктор Персонажа</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@500..900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="./styles/main.css">
 </head>
 <body>
 
-<audio id="error-sound" src="./resources/sounds/EVE-structure-warning.mp3"></audio>
-<audio id="select-sound" src="./resources/sounds/select.mp3"></audio>
-<audio id="submit-sound" src="./resources/sounds/submit.mp3"></audio>
+<div class="grid-backdrop" aria-hidden="true"></div>
+<div class="scanline-overlay" aria-hidden="true"></div>
 
-<section id="section-intro" class="active">
+<audio id="bg-music" loop preload="none" src="./resources/sounds/music-bg.mp3"></audio>
+
+<nav class="step-nav" id="step-nav">
+    <div class="step-nav-track">
+        <div class="step-nav-fill" id="step-nav-fill"></div>
+        <div class="step-item" data-step="section-intro"><span class="step-index">01</span><span class="step-label">Личность</span></div>
+        <div class="step-item" data-step="section-belong"><span class="step-index">02</span><span class="step-label">Происхождение</span></div>
+        <div class="step-item" data-step="section-class"><span class="step-index">03</span><span class="step-label">Класс</span></div>
+        <div class="step-item" data-step="section-stats"><span class="step-index">04</span><span class="step-label">Билд</span></div>
+    </div>
+    <button class="mute-btn sfx-hover" id="mute-toggle" title="Звук">🔊</button>
+</nav>
+
+<section id="section-intro">
     <div class="bg-layer" style="background-image: url('./resources/images/background1.png');"></div>
-    <div class="container" style="text-align: center; margin-top: 10vh;">
-        <img src="./resources/images/welcome.png" alt="Logo" style="margin-bottom: 20px; background: rgba(0, 0, 0, 0); width: 1000px;">
-        
-        <h2>Добро пожаловать в ИСП-1.1</h2>
+    <div class="container" style="text-align: center; margin-top: 8vh;">
+        <img src="./resources/images/welcome.png" alt="Logo" class="welcome-logo">
+
+        <h2 class="glitch-title" data-text="Добро пожаловать в ИСП-1.1">Добро пожаловать в ИСП-1.1</h2>
         <p style="max-width: 600px; margin: 0 auto 30px auto;">
             Инструмент создания персонажа предназначен для того, чтобы помочь вам с составлением анкеты для игры в Hayat Sector Roleplay
         </p>
@@ -29,50 +41,75 @@
         <div style="display: flex; flex-direction: column; align-items: center;">
             <p>ВВЕДИТЕ ИМЯ ПЕРСОНАЖА</p>
             <input type="text" id="input-name" placeholder="Имя 'Псевдоним' Фамилия">
-            
-            <button class="btn-main" id="submitName">ПОДТВЕРДИТЬ ВВОД</button>
-            
+
+            <button class="btn-main sfx-hover" id="submitName">ПОДТВЕРДИТЬ ВВОД</button>
+
             <div class="hazard-container" id="hazard-loader">
                 <div class="hazard-line" id="hazard-bar"></div>
             </div>
+
+            <button class="btn-skip sfx-hover" id="skipToBuild">Пропустить формальности → сразу к билду</button>
         </div>
     </div>
 </section>
 
-<section id="section-belong">
+<section id="section-belong" hidden>
     <div class="bg-layer" style="background-image: url('./resources/images/background1.png');"></div>
     <div class="container">
-        <h1 style="text-align: center; border-bottom: 2px solid white; padding-bottom: 10px;">ВЫБОР ПРОИСХОЖДЕНИЯ</h1>
-<p style="text-align: center; max-width: 800px; margin: 10px auto 30px auto; color: #ccc; font-size: 0.95rem;">
-    Одно лишь прослушивание <a href="https://discord.com/channels/1119006900831396001/1475679871681167474/1475679871681167474">вводной части</a> будет достаточным подспорьем, чтобы понять исторический контекст. Для большинства игр рекомендуется выбирать Солдата Удачи, так как для них в игре создано больше всего контента.
-</p>
+        <div class="section-topbar">
+            <button class="btn-back sfx-hover hidden">← Назад</button>
+        </div>
+        <h1 class="section-title">ВЫБОР ПРОИСХОЖДЕНИЯ</h1>
+        <p style="text-align: center; max-width: 800px; margin: 10px auto 30px auto; color: #ccc; font-size: 0.95rem;">
+            Одно лишь прослушивание <a href="https://discord.com/channels/1119006900831396001/1475679871681167474/1475679871681167474">вводной части</a> будет достаточным подспорьем, чтобы понять исторический контекст. Для большинства игр рекомендуется выбирать Солдата Удачи, так как для них в игре создано больше всего контента.
+        </p>
         <div class="cards-grid" id="belong-grid"></div>
         <div style="text-align: center; width: 100%;">
-            <button class="btn-main" id="submitBelong">ПРИНЯТЬ ВЫБОР</button>
+            <button class="btn-main sfx-hover" id="submitBelong">ПРИНЯТЬ ВЫБОР</button>
         </div>
     </div>
 </section>
 
-<section id="section-class">
+<section id="section-class" hidden>
     <div class="bg-layer" style="background-image: url('./resources/images/background1.png');"></div>
     <div class="container">
-        <h1 style="text-align: center; border-bottom: 2px solid white; padding-bottom: 10px;">ВЫБОР КЛАССА</h1>
-<p style="text-align: center; max-width: 800px; margin: 10px auto 30px auto; color: #ccc; font-size: 0.95rem;">
-    Классы кардинально отличаются своими возможностями и отыгрышем. Солдаты и Специалисты считаются двумя основными классами. Прекогниты и Биодисторторы являются дополнительными их подвидами. Класс влияет на набор доступных к развитию <span class='accent-val'>навыков</span> и <span class='accent-val'>перков</span>. Помните — вам <span class='accentr-val'>ВСЕГДА</span> будет не хватать навыков и перков других классов. Универсальных перков или мультикласса не существует. Выбирайте с умом.
-</p>
+        <div class="section-topbar">
+            <button class="btn-back sfx-hover hidden">← Назад</button>
+        </div>
+        <h1 class="section-title">ВЫБОР КЛАССА</h1>
+        <p style="text-align: center; max-width: 800px; margin: 10px auto 30px auto; color: #ccc; font-size: 0.95rem;">
+            Классы кардинально отличаются своими возможностями и отыгрышем. Солдаты и Специалисты считаются двумя основными классами. Прекогниты и Биодисторторы являются дополнительными их подвидами. Класс влияет на набор доступных к развитию <span class='accent-val'>навыков</span> и <span class='accent-val'>перков</span>. Помните — вам <span class='accentr-val'>ВСЕГДА</span> будет не хватать навыков и перков других классов. Универсальных перков или мультикласса не существует. Выбирайте с умом.
+        </p>
         <div class="cards-grid" id="class-grid"></div>
         <div style="text-align: center; width: 100%;">
-            <button class="btn-main" id="submitClass">ПРИНЯТЬ ВЫБОР</button>
+            <button class="btn-main sfx-hover" id="submitClass">ПРИНЯТЬ ВЫБОР</button>
         </div>
     </div>
 </section>
 
-<section id="section-stats">
+<section id="section-stats" hidden>
     <div class="bg-layer" id="stats-bg" style="background-image: url('./resources/images/background1.png');"></div>
-    
+
     <div class="container">
-        <div style="border: 1px solid #fff; padding: 20px; margin-bottom: 20px; background: rgba(0,0,0,0.6);">
-            <h2 id="final-header" style="margin: 0; text-align: center;">ИМЯ | КЛАСС | БЕЛОНГ</h2>
+        <div class="section-topbar">
+            <button class="btn-back sfx-hover hidden">← Назад</button>
+        </div>
+
+        <div class="final-header-wrap">
+            <h2 id="final-header">ИМЯ | КЛАСС | БЕЛОНГ</h2>
+        </div>
+
+        <div class="build-visual" id="build-visual">
+            <div class="radar-block">
+                <svg id="radar-phys" class="radar-svg" viewBox="0 0 300 300"></svg>
+                <div class="radar-caption" id="radar-phys-caption">—</div>
+                <div class="radar-block-title">Физическая матрица</div>
+            </div>
+            <div class="radar-block">
+                <svg id="radar-skills" class="radar-svg" viewBox="0 0 300 300"></svg>
+                <div class="radar-caption" id="radar-skills-caption">—</div>
+                <div class="radar-block-title">Матрица навыков</div>
+            </div>
         </div>
 
         <div class="stats-wrapper">
@@ -91,12 +128,20 @@
             </div>
         </div>
 
+        <div class="perks-wrapper">
+            <div class="perks-header">
+                <h2 class="section-title" style="margin: 0;">ДОСЬЕ: ОСОБЫЕ ЧЕРТЫ</h2>
+                <div class="pool-counter" style="margin: 0;">Очки черт: <span id="pool-perks-val">0</span></div>
+            </div>
+            <div class="perks-grid" id="perks-grid"></div>
+        </div>
+
         <div class="special-options">
             <label class="checkbox-wrapper">
                 <input type="checkbox" id="chk-hardcore">
                 <span class="hardcore-label">Х̶А̶Р̶Д̶К̶О̶Р̶ 🩸</span>
             </label>
-            
+
             <label class="checkbox-wrapper">
                 <input type="checkbox" id="chk-override">
                 <span class="override-label">Я знаю что делаю (откл. проверку)</span>
@@ -104,11 +149,11 @@
         </div>
 
         <div class="error-msg" id="error-box">
-            ОШИБКА: СУММА СВОБОДНЫХ ОЧКОВ ДОЛЖНА БЫТЬ 0!
+            ОШИБКА: СУММА СВОБОДНЫХ ОЧКОВ ДОЛЖНА БЫТЬ 0 (И НЕ МЕНЬШЕ 0 ПО ЧЕРТАМ)!
         </div>
 
         <div style="text-align: center; margin-bottom: 50px;">
-            <button class="btn-copy" id="generateAndCopy">СКОПИРОВАТЬ АНКЕТУ</button>
+            <button class="btn-copy sfx-hover" id="generateAndCopy">СКОПИРОВАТЬ АНКЕТУ</button>
             <a href="https://discord.com/channels/1119006900831396001/1153404649605435452" target="_blank" class="discord-link">Перейти в Discord канал</a>
         </div>
     </div>
