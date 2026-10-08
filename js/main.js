@@ -4,7 +4,6 @@ import {
   START_SKILL,
   HARDCORE_PHYS,
   HARDCORE_SKILL,
-  HARDCORE_PERK,
   BELONGS,
   CLASSES,
   PHYSICAL_STATS,
@@ -106,7 +105,7 @@ function submitName() {
 
 document.getElementById('submitName').onclick = () => submitName();
 
-function skipToBuild() {
+function skipToClass() {
   playSound('submit');
   const input = document.getElementById("input-name");
   if (!user.name) {
@@ -115,7 +114,6 @@ function skipToBuild() {
   }
 
   unlockStep("section-belong");
-  unlockStep("section-class");
 
   if (!user.belong) {
     const defaultBelong = BELONGS[BELONGS.length - 1]; // Солдат Удачи — рекомендован по умолчанию
@@ -123,18 +121,11 @@ function skipToBuild() {
     selectCard("belong", defaultBelong.id, defaultBelong.title, el);
   }
 
-  if (!user.classId) {
-    const defaultClass = CLASSES[0];
-    const el = classCardEls[0];
-    selectCard("class", defaultClass.id, defaultClass.title, el);
-  }
-
-  initStats();
-  goTo("section-stats");
+  goTo("section-class");
 }
 
-const skipBtn = document.getElementById('skipToBuild');
-if (skipBtn) skipBtn.onclick = () => skipToBuild();
+const skipBtn = document.getElementById('skipToClass');
+if (skipBtn) skipBtn.onclick = () => skipToClass();
 
 /* --------------------------------- БЕЛОНГ --------------------------------- */
 
@@ -376,13 +367,26 @@ function updatePhysPool() {
   updateVisuals();
 }
 
+function sumValues(obj) {
+  return Object.values(obj).reduce((a, b) => a + b, 0);
+}
+
+// Черты оплачиваются из того же пула, что и навыки.
+function skillPoolRemaining() {
+  return pools.skill - sumValues(user.skills) - sumValues(user.perks);
+}
+
 function updateSkillsPool() {
-  const sum = Object.values(user.skills).reduce((a, b) => a + b, 0);
-  const remaining = pools.skill - sum;
+  const remaining = skillPoolRemaining();
   const el = document.getElementById("pool-skills-val");
   el.innerText = remaining;
   el.style.color = remaining === 0 ? "var(--accent-green)" : "var(--accent-red)";
   document.getElementById("col-skills").classList.toggle("balanced", remaining === 0);
+  const combined = document.getElementById("pool-combined-val");
+  if (combined) {
+    combined.innerText = remaining;
+    combined.style.color = remaining === 0 ? "var(--accent-green)" : remaining < 0 ? "var(--accent-red)" : "#fff";
+  }
   updateVisuals();
 }
 
@@ -390,6 +394,7 @@ function updateVisuals() {
   renderRadar('radar-phys', user.stats, 'radar-phys-caption');
   renderRadar('radar-skills', user.skills, 'radar-skills-caption');
   renderPerks();
+  renderPerkChips();
 }
 
 
@@ -482,6 +487,16 @@ function renderRadar(svgId, dataObj, captionId) {
 
 /* --------------------------------- ЧЕРТЫ ---------------------------------- */
 
+function perkSign(cost) {
+  return cost > 0 ? `-${cost}` : `+${Math.abs(cost)}`;
+}
+
+function refreshAfterPerkChange() {
+  renderPerks();
+  renderPerkChips();
+  updateSkillsPool();
+}
+
 function toggleDrawnPerk(perk, merged) {
   const unlockedNow = isPerkUnlocked(perk, merged);
   const alreadySelected = Object.prototype.hasOwnProperty.call(user.perks, perk.id);
@@ -492,51 +507,84 @@ function toggleDrawnPerk(perk, merged) {
     delete user.perks[perk.id];
     playSound('perk_remove');
   } else {
-    const sum = Object.values(user.perks).reduce((a, b) => a + b, 0);
-    const remaining = pools.perk - sum;
-    if (perk.cost > 0 && perk.cost > remaining) {
+    if (perk.cost > 0 && perk.cost > skillPoolRemaining()) {
       playSound('error');
       return;
     }
     user.perks[perk.id] = perk.cost;
     playSound('perk_buy');
   }
-  renderPerks();
+  refreshAfterPerkChange();
 }
 
-function updatePerkPool() {
-  const sum = Object.values(user.perks).reduce((a, b) => a + b, 0);
-  const remaining = pools.perk - sum;
-  const el = document.getElementById('pool-perks-val');
-  if (!el) return;
-  el.innerText = remaining;
-  el.style.color = remaining < 0 ? 'var(--accent-red)' : remaining === 0 ? 'var(--accent-green)' : '#fff';
+// Компактный список выбранных черт на странице билда: только название и цена.
+async function renderPerkChips() {
+  const wrap = document.getElementById('perks-chips');
+  if (!wrap) return;
+
+  const ids = Object.keys(user.perks);
+  if (!ids.length) {
+    wrap.innerHTML = '<span class="perks-chips-empty">Черты не выбраны</span>';
+    return;
+  }
+
+  const allPerks = await loadPerks();
+  wrap.innerHTML = '';
+  ids.forEach((id) => {
+    const perk = allPerks.find((p) => p.id === id);
+    if (!perk) return;
+    const cost = user.perks[id];
+
+    const chip = document.createElement('div');
+    chip.className = 'perk-chip';
+    chip.innerHTML = `
+      <span class="perk-chip-name">${perk.name}</span>
+      <span class="perk-cost ${cost > 0 ? 'cost-pos' : 'cost-neg'}">${perkSign(cost)}</span>
+      <button class="perk-chip-remove sfx-hover" title="Убрать">✕</button>`;
+    chip.querySelector('.perk-chip-remove').onclick = () => {
+      delete user.perks[id];
+      playSound('perk_remove');
+      refreshAfterPerkChange();
+    };
+    wrap.appendChild(chip);
+  });
 }
 
+// Браузер черт. Показываем ТОЛЬКО черты, подходящие классу (все навыки из допуска
+// существуют в билде): сначала доступные, затем закрытые по допуску.
+// Черты других классов не показываются вовсе.
 async function renderPerks() {
   const grid = document.getElementById('perks-grid');
   if (!grid) return;
 
   const allPerks = await loadPerks();
   const merged = { ...user.stats, ...user.skills };
-  const relevant = allPerks.filter((p) => isPerkRelevant(p, merged));
+  const relevant = allPerks
+    .filter((p) => isPerkRelevant(p, merged))
+    .map((p, idx) => ({ perk: p, idx, unlocked: isPerkUnlocked(p, merged) }))
+    .sort((a, b) => Number(b.unlocked) - Number(a.unlocked) || a.idx - b.idx);
 
   grid.innerHTML = '';
 
   if (relevant.length === 0) {
-    grid.innerHTML = `<div class="perks-empty">Для текущего билда нет доступных черт. Отредактируй data/perks.json.</div>`;
-    updatePerkPool();
+    grid.innerHTML = `<div class="perks-empty">Для текущего билда нет доступных черт.</div>`;
     return;
   }
 
-  relevant.forEach((perk) => {
-    const unlockedNow = isPerkUnlocked(perk, merged);
+  let lockedHeaderAdded = false;
+  relevant.forEach(({ perk, unlocked }) => {
+    if (!unlocked && !lockedHeaderAdded) {
+      lockedHeaderAdded = true;
+      const sep = document.createElement('div');
+      sep.className = 'perks-divider';
+      sep.textContent = 'Закрыты по допуску';
+      grid.appendChild(sep);
+    }
+
     const selected = Object.prototype.hasOwnProperty.call(user.perks, perk.id);
-
     const card = document.createElement('div');
-    card.className = `perk-card sfx-hover ${unlockedNow ? '' : 'locked'} ${selected ? 'selected' : ''}`;
+    card.className = `perk-card sfx-hover ${unlocked ? '' : 'locked'} ${selected ? 'selected' : ''}`;
 
-    const costLabel = perk.cost > 0 ? `-${perk.cost}` : `+${Math.abs(perk.cost)}`;
     const costClass = perk.cost > 0 ? 'cost-pos' : 'cost-neg';
     const reqText = perk.requirements.map(describeRequirement).join(' · ');
 
@@ -545,24 +593,48 @@ async function renderPerks() {
         <img class="perk-emblem" src="${perk.emblem}" alt=""
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <div class="perk-emblem-fallback" style="display:none;">${perk.name.charAt(0)}</div>
-        ${unlockedNow ? '' : '<div class="perk-lock">🔒</div>'}
+        ${unlocked ? '' : '<div class="perk-lock">🔒</div>'}
       </div>
       <div class="perk-body">
         <div class="perk-title-row">
           <span class="perk-name">${perk.name}</span>
-          <span class="perk-cost ${costClass}">${costLabel}</span>
+          <span class="perk-cost ${costClass}">${perkSign(perk.cost)}</span>
         </div>
         <div class="perk-desc">${perk.description}</div>
-        <div class="perk-req">${reqText}</div>
+        <div class="perk-req">Допуск: ${reqText}</div>
       </div>`;
 
     card.onclick = () => toggleDrawnPerk(perk, merged);
-    attachTilt(card, 6);
     grid.appendChild(card);
   });
-
-  updatePerkPool();
 }
+
+/* Окно браузера черт */
+const perksModal = document.getElementById('perks-modal');
+
+function openPerksModal() {
+  playSound('transition');
+  perksModal.hidden = false;
+  renderPerks();
+  requestAnimationFrame(() => perksModal.classList.add('open'));
+}
+
+function closePerksModal() {
+  playSound('toggle');
+  perksModal.classList.remove('open');
+  setTimeout(() => {
+    perksModal.hidden = true;
+  }, 250);
+}
+
+document.getElementById('openPerksBrowser').onclick = () => openPerksModal();
+document.getElementById('closePerksBrowser').onclick = () => closePerksModal();
+perksModal.addEventListener('click', (e) => {
+  if (e.target === perksModal) closePerksModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !perksModal.hidden) closePerksModal();
+});
 
 
 /* ---------------------------- ЛОГИКА ЧЕКБОКСОВ ---------------------------- */
@@ -583,11 +655,9 @@ function toggleHardcore() {
   if (isHardcore) {
     pools.phys = HARDCORE_PHYS;
     pools.skill = HARDCORE_SKILL;
-    pools.perk = HARDCORE_PERK;
   } else {
     pools.phys = START_PHYS;
     pools.skill = START_SKILL;
-    pools.perk = 3;
   }
   renderStats();
 }
@@ -617,14 +687,13 @@ async function generateAndCopy() {
   const perkSum = Object.values(user.perks).reduce((a, b) => a + b, 0);
 
   const physRem = pools.phys - physSum;
-  const skillRem = pools.skill - skillSum;
-  const perkRem = pools.perk - perkSum;
+  const skillRem = pools.skill - skillSum - perkSum;
   const isOverride = document.getElementById("chk-override").checked;
   const isHardcore = document.getElementById("chk-hardcore").checked;
 
   const errorBox = document.getElementById("error-box");
 
-  if (!isOverride && (physRem !== 0 || skillRem !== 0 || perkRem < 0)) {
+  if (!isOverride && (physRem !== 0 || skillRem !== 0)) {
     playSound('error');
     errorBox.style.display = "block";
     return;
@@ -663,8 +732,8 @@ async function generateAndCopy() {
     perkIds.forEach((id) => {
       const perk = allPerks.find((p) => p.id === id);
       if (!perk) return;
-      const sign = perk.cost > 0 ? `-${perk.cost}` : `+${Math.abs(perk.cost)}`;
-      text += `- ${perk.name} (${sign} очк.)\n`;
+      const plainDesc = perk.description.replace(/<[^>]+>/g, '');
+      text += `- **${perk.name}** (${perkSign(perk.cost)} очк.): ${plainDesc}\n`;
     });
   }
 

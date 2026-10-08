@@ -32,8 +32,8 @@
     <div class="bg-layer" style="background-image: url('./resources/images/background1.png');"></div>
     <div class="container" style="text-align: center; margin-top: 8vh;">
         <img src="./resources/images/welcome.png" alt="Logo" class="welcome-logo">
-
-        <h2 class="glitch-title" data-text="Добро пожаловать в ИСП-1.1">Добро пожаловать в ИСП-1.1</h2>
+<br/>
+        <h2 data-text="Добро пожаловать в ИСП-1.1">Добро пожаловать в ИСП-1.1</h2>
         <p style="max-width: 600px; margin: 0 auto 30px auto;">
             Инструмент создания персонажа предназначен для того, чтобы помочь вам с составлением анкеты для игры в Hayat Sector Roleplay
         </p>
@@ -48,7 +48,7 @@
                 <div class="hazard-line" id="hazard-bar"></div>
             </div>
 
-            <button class="btn-skip sfx-hover" id="skipToBuild">Пропустить формальности → сразу к билду</button>
+            <button class="btn-skip sfx-hover" id="skipToClass">Пропустить формальности → к выбору класса</button>
         </div>
     </div>
 </section>
@@ -99,20 +99,7 @@
             <h2 id="final-header">ИМЯ | КЛАСС | БЕЛОНГ</h2>
         </div>
 
-        <div class="build-visual" id="build-visual">
-            <div class="radar-block">
-                <svg id="radar-phys" class="radar-svg" viewBox="0 0 300 300"></svg>
-                <div class="radar-caption" id="radar-phys-caption">—</div>
-                <div class="radar-block-title">Физическая матрица</div>
-            </div>
-            <div class="radar-block">
-                <svg id="radar-skills" class="radar-svg" viewBox="0 0 300 300"></svg>
-                <div class="radar-caption" id="radar-skills-caption">—</div>
-                <div class="radar-block-title">Матрица навыков</div>
-            </div>
-        </div>
-
-        <div class="stats-wrapper">
+        <div class="build-dashboard">
             <div class="stat-column" id="col-phys">
                 <div class="pool-counter">
                     Свободные очки (Физ.): <span id="pool-phys-val">0</span>
@@ -126,14 +113,27 @@
                 </div>
                 <div id="skills-list"></div>
             </div>
-        </div>
 
-        <div class="perks-wrapper">
-            <div class="perks-header">
-                <h2 class="section-title" style="margin: 0;">ДОСЬЕ: ОСОБЫЕ ЧЕРТЫ</h2>
-                <div class="pool-counter" style="margin: 0;">Очки черт: <span id="pool-perks-val">0</span></div>
+            <div class="visual-column">
+                <div class="radar-block">
+                    <div class="radar-block-title">Физическая матрица</div>
+                    <svg id="radar-phys" class="radar-svg" viewBox="0 0 300 300"></svg>
+                    <div class="radar-caption" id="radar-phys-caption">—</div>
+                </div>
+                <div class="radar-block">
+                    <div class="radar-block-title">Матрица навыков</div>
+                    <svg id="radar-skills" class="radar-svg" viewBox="0 0 300 300"></svg>
+                    <div class="radar-caption" id="radar-skills-caption">—</div>
+                </div>
+
+                <div class="perks-panel">
+                    <div class="perks-panel-header">
+                        <span class="radar-block-title" style="margin:0;">Черты</span>
+                        <button class="btn-chip-open sfx-hover" id="openPerksBrowser">Выбрать черты →</button>
+                    </div>
+                    <div class="perks-chips" id="perks-chips"></div>
+                </div>
             </div>
-            <div class="perks-grid" id="perks-grid"></div>
         </div>
 
         <div class="special-options">
@@ -149,7 +149,7 @@
         </div>
 
         <div class="error-msg" id="error-box">
-            ОШИБКА: СУММА СВОБОДНЫХ ОЧКОВ ДОЛЖНА БЫТЬ 0 (И НЕ МЕНЬШЕ 0 ПО ЧЕРТАМ)!
+            ОШИБКА: СУММА СВОБОДНЫХ ОЧКОВ ДОЛЖНА БЫТЬ 0! (ЧЕРТЫ СПИСЫВАЮТСЯ С ОЧКОВ НАВЫКОВ)
         </div>
 
         <div style="text-align: center; margin-bottom: 50px;">
@@ -158,6 +158,18 @@
         </div>
     </div>
 </section>
+
+<div class="modal-overlay" id="perks-modal" hidden>
+    <div class="modal-panel">
+        <div class="modal-header">
+            <h2 class="modal-title">ДОСЬЕ: ОСОБЫЕ ЧЕРТЫ</h2>
+            <div class="modal-pool">Очки навыков: <span id="pool-combined-val">0</span></div>
+            <button class="modal-close sfx-hover" id="closePerksBrowser" title="Закрыть">✕</button>
+        </div>
+        <p class="modal-note">Стоимость черт списывается с очков навыков. Черты с отрицательной стоимостью возвращают очки. Показаны только черты, подходящие выбранному классу: сначала доступные, затем закрытые по допуску.</p>
+        <div class="perks-grid" id="perks-grid"></div>
+    </div>
+</div>
 
 <script type="module" src="./js/main.js"></script>
 <div id="global-tooltip" class="global-tooltip-text"></div>
